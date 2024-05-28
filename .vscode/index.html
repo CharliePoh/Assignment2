@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Expense Tracker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-container h2 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .form-control {
+            background-color: #444;
+            color: #f8f9fa;
+            border: 1px solid #555;
+        }
+        .form-control:focus {
+            background-color: #555;
+            color: #f8f9fa;
+        }
+        .btn-primary {
+            background-color: greenyellow;
+            color: black;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #ccc;
+            color: rgba(0, 0, 0, 0.183);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="text-center" id="formTitle">Expense Tracker Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username" class="text-white">Username</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password" class="text-white">Password</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Login</button>
+            <button type="button" class="btn btn-secondary btn-block" id="toggleBtn">Sign Up</button>
+        </form>
+        <div id="message" class="alert alert-danger mt-3" style="display: none;"></div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (isLoginMode) {
+                const storedUser = JSON.parse(localStorage.getItem(username));
+                if (storedUser && storedUser.password === password) {
+                    localStorage.setItem('currentUser', username);
+                    window.location.href = 'expenses-tracker.html';
+                } else {
+                    document.getElementById('message').style.display = 'block';
+                    document.getElementById('message').textContent = 'Invalid username or password';
+                }
+            } else {
+                if (localStorage.getItem(username)) {
+                    document.getElementById('message').style.display = 'block';
+                    document.getElementById('message').textContent = 'Username already exists';
+                } else {
+                    localStorage.setItem(username, JSON.stringify({ password }));
+                    document.getElementById('message').style.display = 'block';
+                    document.getElementById('message').textContent = 'Sign up successful...';
+                    toggleMode();
+                }
+            }
+        });
+
+        document.getElementById('toggleBtn').addEventListener('click', toggleMode);
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('formTitle').textContent = isLoginMode ? 'Expense Tracker Login' : 'Sign Up';
+            document.getElementById('submitBtn').textContent = isLoginMode ? 'Login' : 'Sign Up';
+            document.getElementById('toggleBtn').textContent = isLoginMode ? 'Sign Up' : 'Login';
+            document.getElementById('message').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
