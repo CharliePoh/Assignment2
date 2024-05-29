@@ -6,7 +6,7 @@ body {
 }
 .expense-item:hover {
     cursor: pointer;
-    background-color: #f8f9faa4 !important;
+    background-color: #f8f9faa4;
     color: black;
 }
 #mainInterface, #expenseForm, #summary {
@@ -18,7 +18,7 @@ body {
     max-height: calc(100vh - 100px);
 }
 .list-group-item {
-    background-color: #444 !important;
+    background-color: #444;
     color: #f8f9fa;
     border: 3px solid #555;
     display: flex;
