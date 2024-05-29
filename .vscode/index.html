@@ -48,7 +48,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h2 class="text-center" id="formTitle">Expense Tracker Login</h2>
+        <h2 class="text-center" id="formTitle">Login</h2>
         <form id="loginForm">
             <div class="form-group">
                 <label for="username" class="text-white">Username</label>
@@ -59,7 +59,7 @@
                 <input type="password" class="form-control" id="password" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Login</button>
-            <button type="button" class="btn btn-secondary btn-block" id="toggleBtn">Sign Up</button>
+            <button type="button" class="btn btn-secondary btn-block" id="toggleBtn">Create an account</button>
         </form>
         <div id="message" class="alert alert-danger mt-3" style="display: none;"></div>
     </div>
@@ -88,8 +88,8 @@
                 } else {
                     localStorage.setItem(username, JSON.stringify({ password }));
                     document.getElementById('message').style.display = 'block';
-                    document.getElementById('message').textContent = 'Sign up successful...';
-                    toggleMode();
+                    document.getElementById('message').textContent = 'Account Sign Up Successful';
+                    setTimeout(toggleMode, 3000);
                 }
             }
         });
@@ -98,11 +98,23 @@
 
         function toggleMode() {
             isLoginMode = !isLoginMode;
-            document.getElementById('formTitle').textContent = isLoginMode ? 'Expense Tracker Login' : 'Sign Up';
+            document.getElementById('formTitle').textContent = isLoginMode ? 'Login' : 'Create New Account';
             document.getElementById('submitBtn').textContent = isLoginMode ? 'Login' : 'Sign Up';
             document.getElementById('toggleBtn').textContent = isLoginMode ? 'Sign Up' : 'Login';
             document.getElementById('message').style.display = 'none';
+            resetInputFields();
         }
+
+        function resetInputFields() {
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        }
+
+        function showMessage(message) {
+            document.getElementById('modalMessage').textContent = message;
+            $('#messageModal').modal('show');
+        }
+
     </script>
 </body>
 </html>
