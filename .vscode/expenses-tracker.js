@@ -1,5 +1,16 @@
 $(document).ready(function() {
-    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+    let currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    let usersData = JSON.parse(localStorage.getItem('usersData')) || {};
+     // Ensure usersData has a property for the currentUser
+     if (!usersData[currentUser]) {
+        usersData[currentUser] = { expenses: [] };
+    }
+    let expenses = usersData[currentUser].expenses || [];
     let editingIndex = null;
     let currentMonth = new Date().toISOString().slice(0, 7);
 
@@ -12,7 +23,8 @@ $(document).ready(function() {
     }
 
     function updateLocalStorage() {
-        localStorage.setItem('expenses', JSON.stringify(expenses));
+        usersData[currentUser].expenses = expenses;
+        localStorage.setItem('usersData', JSON.stringify(usersData));
     }
 
     function renderExpenses() {
