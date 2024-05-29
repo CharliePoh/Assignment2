@@ -6,8 +6,7 @@ $(document).ready(function() {
     }
 
     let usersData = JSON.parse(localStorage.getItem('usersData')) || {};
-     // Ensure usersData has a property for the currentUser
-     if (!usersData[currentUser]) {
+    if (!usersData[currentUser]) {
         usersData[currentUser] = { expenses: [] };
     }
     let expenses = usersData[currentUser].expenses || [];
@@ -80,31 +79,26 @@ $(document).ready(function() {
     function renderSummaryChart() {
         const ctx = $('#summaryChart');
         const categoryTotals = {};
-        let totalExpense = 0; // Initialize totalExpense variable
-        const currentUser = localStorage.getItem('currentUser');
-        const filteredExpenses = expenses.filter(expense => expense.username === currentUser && expense.date.startsWith(currentMonth));
+        let totalExpense = 0;
+        const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
         filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-        // Calculate total expense and category totals
+
         filteredExpenses.forEach(expense => {
             categoryTotals[expense.description] = (categoryTotals[expense.description] || 0) + parseFloat(expense.amount);
             totalExpense += parseFloat(expense.amount);
         });
-    
+
         const labels = Object.keys(categoryTotals);
         const data = Object.values(categoryTotals);
-    
-        // Destroy previous chart instance if exists
+
         if (ctx.data('chart')) {
             ctx.data('chart').destroy();
         }
-    
+
         if (labels.length === 0) {
-            // If there is no data, display an empty frame
             ctx.empty();
             ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
         } else {
-            // If there is data, render the pie chart
             const newChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
@@ -128,28 +122,25 @@ $(document).ready(function() {
                     }]
                 }
             });
-    
-            // Remove any existing total expense element before adding a new one
+
             $('#totalExpense').remove();
-    
             const totalExpenseElement = document.createElement('div');
-            totalExpenseElement.id = 'totalExpense'; // Add an ID for easier reference
+            totalExpenseElement.id = 'totalExpense';
             totalExpenseElement.textContent = 'Total Expense: RM ' + totalExpense.toFixed(2);
             totalExpenseElement.style.fontSize = '16px';
             totalExpenseElement.style.marginTop = '10px';
-            totalExpenseElement.style.color = 'red'; // Set text color to red
-            totalExpenseElement.style.backgroundColor = 'white'; // Add border with red color
-            totalExpenseElement.style.padding = '5px'; // Add some padding for better appearance
+            totalExpenseElement.style.color = 'red';
+            totalExpenseElement.style.backgroundColor = 'white';
+            totalExpenseElement.style.padding = '5px';
             document.getElementById('summary').appendChild(totalExpenseElement);
-    
+
             const backButton = document.getElementById('backBtn');
             document.getElementById('summary').appendChild(backButton);
-    
-            ctx.data('chart', newChart); // Save the new chart instance
+
+            ctx.data('chart', newChart);
         }
     }
-    
-    
+
     function hideSummary() {
         $('#summary').hide();
         $('#mainInterface').show();
@@ -215,7 +206,7 @@ $(document).ready(function() {
         const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
         const expense = filteredExpenses[listIndex];
         editingIndex = expenses.findIndex(e => e === expense);
-        
+
         $('#expenseAmount').val(expense.amount);
         $('#expenseDate').val(formatDate(expense.date));
         $('#expenseDescription').val(expense.description);
