@@ -14,7 +14,7 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    overflow-y: auto;
+    overflow-y: hidden;
     max-height: calc(100vh - 100px);
 }
 .list-group-item {
@@ -29,6 +29,10 @@ body {
     background-color: greenyellow;
     color: black;
     border: none;
+}
+.btn-primary:hover {
+    background-color: #ccc;
+    color: rgba(0, 0, 0, 0.183);
 }
 .d-flex {
     margin-top: 20px;
@@ -59,7 +63,7 @@ body {
     color: #fff;
 }
 #summaryChart {
-    height: auto;
+    max-height: calc(100vh - 100px);
     display: block;
     margin: 0 auto; 
     margin-bottom: 20px;
@@ -69,6 +73,14 @@ body {
     display: none;
     text-align: center; 
     padding: 20px; 
+}
+.switch-wrapper {
+    display: flex;
+    justify-content: right;
+    margin-bottom: 10px;
+}
+.switch-wrapper button {
+    margin: 0px;
 }
 #backBtn {
     margin-top: 20px;
