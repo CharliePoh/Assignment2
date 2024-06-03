@@ -82,129 +82,99 @@ $(document).ready(function() {
         const ctx = $('#summaryChart');
         const categoryTotals = {};
         let totalExpense = 0;
-
+        let filteredExpenses;
+    
         if (currentView === 'monthly') {
-            $('#summaryNavigation').show();
-            const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
-            filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            filteredExpenses.forEach(expense => {
-                categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + parseFloat(expense.amount);
-                totalExpense += parseFloat(expense.amount);
-            });
-
-            const labels = Object.keys(categoryTotals);
-            const data = Object.values(categoryTotals);
-
-            if (ctx.data('chart')) {
-                ctx.data('chart').destroy();
-            }
-
-            if (labels.length === 0) {
-                ctx.empty();
-                ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
-            } else {
-                const newChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Expense Summary',
-                            data: data,
-                            backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(255, 99, 132, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(255, 99, 132, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    }
-                });
-
-                $('#totalExpense').remove();
-                const totalExpenseElement = document.createElement('div');
-                totalExpenseElement.id = 'totalExpense';
-                totalExpenseElement.textContent = 'Total Monthly Expense: RM ' + totalExpense.toFixed(2);
-                totalExpenseElement.style.fontSize = '16px';
-                totalExpenseElement.style.marginTop = '10px';
-                totalExpenseElement.style.color = 'red';
-                totalExpenseElement.style.backgroundColor = 'white';
-                totalExpenseElement.style.padding = '5px';
-                document.getElementById('summary').appendChild(totalExpenseElement);
-
-                const backButton = document.getElementById('backBtn');
-                document.getElementById('summary').appendChild(backButton);
-
-                ctx.data('chart', newChart);
-            }
+            filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
         } else if (currentView === 'yearly') {
-            $('#summaryNavigation').hide();
             const currentYear = new Date().getFullYear();
-            const filteredExpenses = expenses.filter(expense => new Date(expense.date).getFullYear() === currentYear);
-
-            filteredExpenses.forEach(expense => {
-                const month = new Date(expense.date).toLocaleString('default', { month: 'long' });
-                categoryTotals[month] = (categoryTotals[month] || 0) + parseFloat(expense.amount);
-                totalExpense += parseFloat(expense.amount);
-            });
-
-            const labels = Object.keys(categoryTotals);
-            const data = Object.values(categoryTotals);
-
-            if (ctx.data('chart')) {
-                ctx.data('chart').destroy();
-            }
-
-            if (labels.length === 0) {
-                ctx.empty();
-                ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
+            filteredExpenses = expenses.filter(expense => new Date(expense.date).getFullYear() === currentYear);
+        }
+    
+        filteredExpenses.forEach(expense => {
+            let category;
+            if (currentView === 'monthly') {
+                category = expense.category;
             } else {
-                const newChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Monthly Expense Summary',
-                            data: data,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            fill: false,
-                            tension: 0.1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+                category = new Date(expense.date).toLocaleString('default', { month: 'long' });
+            }
+            categoryTotals[category] = (categoryTotals[category] || 0) + parseFloat(expense.amount);
+            totalExpense += parseFloat(expense.amount);
+        });
+    
+        const labels = Object.keys(categoryTotals);
+        const data = Object.values(categoryTotals);
+    
+        if (ctx.data('chart')) {
+            ctx.data('chart').destroy();
+        }
+    
+        $('#totalExpense').remove(); // Ensure the totalExpense element is removed before re-adding
+        ctx.empty(); // Clear previous chart or message
+    
+        if (labels.length === 0) {
+            ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
+        } else {
+            let chartType;
+            if (currentView === 'monthly') {
+                chartType = 'pie';
+            } else {
+                chartType = 'line';
+            }
+    
+            const dataset = {
+                labels: labels,
+                datasets: [{
+                    label: currentView === 'monthly' ? 'Expense Summary' : 'Monthly Expense Summary',
+                    data: data,
+                    backgroundColor: currentView === 'monthly' ? [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ] : 'rgba(75, 192, 192, 0.2)',
+                    borderColor: currentView === 'monthly' ? [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ] : 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: currentView !== 'monthly',
+                    tension: currentView === 'monthly' ? 0 : 0.1
+                }]
+            };
+    
+            const newChart = new Chart(ctx, {
+                type: chartType,
+                data: dataset,
+                options: chartType === 'line' ? {
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
-                });
-
-                $('#totalExpense').remove();
-                const totalExpenseElement = document.createElement('div');
-                totalExpenseElement.id = 'totalExpense';
+                } : {}
+            });
+    
+            const totalExpenseElement = document.createElement('div');
+            totalExpenseElement.id = 'totalExpense';
+            if (currentView === 'monthly') {
+                totalExpenseElement.textContent = 'Total Monthly Expense: RM ' + totalExpense.toFixed(2);
+            } else {
                 totalExpenseElement.textContent = 'Total Annual Expense: RM ' + totalExpense.toFixed(2);
-                totalExpenseElement.style.fontSize = '16px';
-                totalExpenseElement.style.marginTop = '10px';
-                totalExpenseElement.style.color = 'red';
-                totalExpenseElement.style.backgroundColor = 'white';
-                totalExpenseElement.style.padding = '5px';
-                document.getElementById('summary').appendChild(totalExpenseElement);
-
-                const backButton = document.getElementById('backBtn');
-                document.getElementById('summary').appendChild(backButton);
-
-                ctx.data('chart', newChart);
             }
+            totalExpenseElement.style.fontSize = '16px';
+            totalExpenseElement.style.marginTop = '10px';
+            totalExpenseElement.style.color = 'red';
+            totalExpenseElement.style.backgroundColor = 'white';
+            totalExpenseElement.style.padding = '5px';
+            document.getElementById('summary').appendChild(totalExpenseElement);
+    
+            const backButton = document.getElementById('backBtn');
+            document.getElementById('summary').appendChild(backButton);
+    
+            ctx.data('chart', newChart);
         }
     }
 
