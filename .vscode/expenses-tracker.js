@@ -101,6 +101,16 @@ $(document).ready(function() {
 
     function renderSummaryChart() {
         const ctx = $('#summaryChart');
+        const chartType = ctx.data('chartType') || 'monthly';
+
+        if (chartType === 'monthly') {
+            renderMonthlySummaryChart(ctx);
+        } else if (chartType === 'yearly') {
+            renderYearlySummaryChart(ctx);
+        }
+    }
+
+    function renderMonthlySummaryChart(ctx) {
         const categoryTotals = {};
         let totalExpense = 0;
         const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
@@ -146,22 +156,69 @@ $(document).ready(function() {
                 }
             });
 
-            $('#totalExpense').remove();
-            const totalExpenseElement = document.createElement('div');
-            totalExpenseElement.id = 'totalExpense';
-            totalExpenseElement.textContent = 'Total Expense: RM ' + totalExpense.toFixed(2);
-            totalExpenseElement.style.fontSize = '16px';
-            totalExpenseElement.style.marginTop = '10px';
-            totalExpenseElement.style.color = 'red';
-            totalExpenseElement.style.backgroundColor = 'white';
-            totalExpenseElement.style.padding = '5px';
-            document.getElementById('summary').appendChild(totalExpenseElement);
+            ctx.data('chart', newChart);
+        }
 
-            const backButton = document.getElementById('backBtn');
-            document.getElementById('summary').appendChild(backButton);
+        $('#totalExpense').text('Total Expense: RM ' + totalExpense.toFixed(2));
+    }
+
+    function renderYearlySummaryChart(ctx) {
+        const monthlyTotals = {};
+        const currentYear = currentMonth.split('-')[0];
+        let totalExpense = 0;
+
+        expenses.forEach(expense => {
+            const expenseYear = expense.date.split('-')[0];
+            if (expenseYear === currentYear) {
+                const month = expense.date.split('-')[1];
+                monthlyTotals[month] = (monthlyTotals[month] || 0) + parseFloat(expense.amount);
+                totalExpense += parseFloat(expense.amount);
+            }
+        });
+
+        const labels = Object.keys(monthlyTotals).sort();
+        const data = labels.map(month => monthlyTotals[month]);
+
+        if (ctx.data('chart')) {
+            ctx.data('chart').destroy();
+        }
+
+        if (labels.length === 0) {
+            ctx.empty();
+            ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
+        } else {
+            const newChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels.map(month => new Date(currentYear, month - 1).toLocaleString('default', { month: 'long' })),
+                    datasets: [{
+                        label: 'Monthly Expenses',
+                        data: data,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1,
+                        fill: true
+                    }]
+                }
+            });
 
             ctx.data('chart', newChart);
         }
+
+        $('#totalExpense').text('Total Yearly Expense: RM ' + totalExpense.toFixed(2));
+    }
+
+    function updateButtonColors(selectedButtonId) {
+        const buttons = ['#viewMonthlySummaryBtn', '#viewYearlySummaryBtn'];
+        buttons.forEach(buttonId => {
+            if (buttonId === selectedButtonId) {
+                $(buttonId).css('background-color', 'greenyellow');
+                $(buttonId).css('color', 'black');
+            } else {
+                $(buttonId).css('background-color', '');
+                $(buttonId).css('color', '');
+            }
+        });
     }
 
     function hideSummary() {
@@ -252,8 +309,24 @@ $(document).ready(function() {
         }
     });
 
+    $('#viewMonthlySummaryBtn').click(function() {
+        $('#totalExpense').remove();
+        $('#summaryChart').data('chartType', 'monthly');
+        updateButtonColors('#viewMonthlySummaryBtn');
+        renderSummaryChart();
+    });
+
+    $('#viewYearlySummaryBtn').click(function() {
+        $('#totalExpense').remove();
+        $('#summaryChart').data('chartType', 'yearly');
+        updateButtonColors('#viewYearlySummaryBtn');
+        renderSummaryChart();
+    });
+
     $('#viewSummaryBtn').click(function() {
         $('#totalExpense').remove(); // Clear the previous total expense display
+        $('#summaryChart').data('chartType', 'monthly');
+        updateButtonColors('#viewMonthlySummaryBtn');
         showSummary();
     });
 

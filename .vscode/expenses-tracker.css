@@ -82,8 +82,9 @@ body {
     }
 }
 .navbar {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: #34495e;
     border-radius: 8px;
@@ -97,4 +98,14 @@ body {
     font-size: 1.8rem;
     color: #ecf0f1;
     margin: 0;
+}
+.navbar .btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
 }

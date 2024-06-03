@@ -88,11 +88,16 @@
 
         <!-- View Summary -->
         <div id="summary" style="display:none;">
+            <div class="d-flex justify-content-center">
+                <button id="viewMonthlySummaryBtn" class="btn btn-secondary m-2">Monthly Summary</button>
+                <button id="viewYearlySummaryBtn" class="btn btn-secondary m-2">Yearly Summary</button>
+            </div>
             <canvas id="summaryChart"></canvas>
+            <div id="totalExpense" style="font-size: 16px; margin-top: 10px; color: red; background-color: white; padding: 5px;"></div>
             <div>
                 <button type="button" class="btn btn-secondary" id="backBtn"><b>Back</b></button>
             </div>
-        </div>
+        </div>        
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
