@@ -82,23 +82,24 @@ $(document).ready(function() {
         const ctx = $('#summaryChart');
         const categoryTotals = {};
         let totalExpense = 0;
-    
+
         if (currentView === 'monthly') {
+            $('#summaryNavigation').show();
             const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
             filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
+
             filteredExpenses.forEach(expense => {
                 categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + parseFloat(expense.amount);
                 totalExpense += parseFloat(expense.amount);
             });
-    
+
             const labels = Object.keys(categoryTotals);
             const data = Object.values(categoryTotals);
-    
+
             if (ctx.data('chart')) {
                 ctx.data('chart').destroy();
             }
-    
+
             if (labels.length === 0) {
                 ctx.empty();
                 ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
@@ -126,7 +127,7 @@ $(document).ready(function() {
                         }]
                     }
                 });
-    
+
                 $('#totalExpense').remove();
                 const totalExpenseElement = document.createElement('div');
                 totalExpenseElement.id = 'totalExpense';
@@ -137,36 +138,34 @@ $(document).ready(function() {
                 totalExpenseElement.style.backgroundColor = 'white';
                 totalExpenseElement.style.padding = '5px';
                 document.getElementById('summary').appendChild(totalExpenseElement);
-    
+
                 const backButton = document.getElementById('backBtn');
                 document.getElementById('summary').appendChild(backButton);
-    
+
                 ctx.data('chart', newChart);
             }
         } else if (currentView === 'yearly') {
+            $('#summaryNavigation').hide();
             const currentYear = new Date().getFullYear();
             const filteredExpenses = expenses.filter(expense => new Date(expense.date).getFullYear() === currentYear);
-        
+
             filteredExpenses.forEach(expense => {
                 const month = new Date(expense.date).toLocaleString('default', { month: 'long' });
                 categoryTotals[month] = (categoryTotals[month] || 0) + parseFloat(expense.amount);
                 totalExpense += parseFloat(expense.amount);
             });
-        
+
             const labels = Object.keys(categoryTotals);
             const data = Object.values(categoryTotals);
-        
+
             if (ctx.data('chart')) {
                 ctx.data('chart').destroy();
             }
-        
+
             if (labels.length === 0) {
                 ctx.empty();
                 ctx.append('<div class="text-center" style="color: #ccc; font-size: 16px;">No data available</div>');
             } else {
-                // Determine device pixel ratio dynamically
-                const devicePixelRatio = window.devicePixelRatio || 1;
-        
                 const newChart = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -182,10 +181,14 @@ $(document).ready(function() {
                         }]
                     },
                     options: {
-                        devicePixelRatio: devicePixelRatio // Set the device pixel ratio
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
                     }
                 });
-        
+
                 $('#totalExpense').remove();
                 const totalExpenseElement = document.createElement('div');
                 totalExpenseElement.id = 'totalExpense';
@@ -196,15 +199,14 @@ $(document).ready(function() {
                 totalExpenseElement.style.backgroundColor = 'white';
                 totalExpenseElement.style.padding = '5px';
                 document.getElementById('summary').appendChild(totalExpenseElement);
-        
+
                 const backButton = document.getElementById('backBtn');
                 document.getElementById('summary').appendChild(backButton);
-        
+
                 ctx.data('chart', newChart);
             }
         }
-        
-    }    
+    }
 
     function hideSummary() {
         $('#summary').hide();
