@@ -80,16 +80,18 @@
                 } else {
                     document.getElementById('message').style.display = 'block';
                     document.getElementById('message').textContent = 'Invalid username or password';
+                    setTimeout(toggleMode, 500);
                 }
             } else {
                 if (localStorage.getItem(username)) {
                     document.getElementById('message').style.display = 'block';
                     document.getElementById('message').textContent = 'Username already exists';
+                    setTimeout(toggleMode, 500);
                 } else {
                     localStorage.setItem(username, JSON.stringify({ password }));
                     document.getElementById('message').style.display = 'block';
                     document.getElementById('message').textContent = 'Account Sign Up Successful';
-                    setTimeout(toggleMode, 3000);
+                    setTimeout(toggleMode, 500);
                 }
             }
         });

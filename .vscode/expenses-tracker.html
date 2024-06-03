@@ -50,8 +50,18 @@
                     <input type="number" step="0.01" class="form-control" id="expenseAmount" required>
                 </div>
                 <div class="form-group">
+                    <label for="expenseCategory" class="text-white">Category</label>
+                    <select class="form-control" id="expenseCategory" required>
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="expenseDescription" class="text-white">Description</label>
-                    <input type="text" class="form-control" id="expenseDescription" required>
+                    <input type="text" class="form-control" id="expenseDescription">
                 </div>
                 <button type="submit" class="btn btn-success">Save</button>
                 <button type="button" class="btn btn-danger" id="deleteBtn" style="display:none;">Delete</button>
@@ -62,6 +72,10 @@
             <div id="deleteMessage" class="alert alert-success mt-3" style="display: none;">Expense deleted successfully!</div>
         </div>
         <div id="summary" style="display:none;">
+            <div class="switch-wrapper">
+                <button id="monthlyViewBtn" class="btn btn-primary">Monthly View</button>
+                <button id="yearlyViewBtn" class="btn btn-secondary">Yearly View</button>
+            </div>
             <canvas id="summaryChart"></canvas>
             <div>
                 <button type="button" class="btn btn-secondary" id="backBtn"><b>Back</b></button>
