@@ -26,25 +26,48 @@ $(document).ready(function() {
         localStorage.setItem('usersData', JSON.stringify(usersData));
     }
 
+    function getIconPath(category) {
+        switch (category) {
+            case 'Shops':
+                return 'Icons/online-shopping.png';
+            case 'Food and Drink':
+                return 'Icons/food.png';
+            case 'Bills':
+                return 'Icons/bill.png';
+            case 'Others':
+                return 'Icons/other.png';
+            default:
+                return 'Icons/other.png';
+        }
+    }
+
     function renderExpenses() {
         $('#expenseList').empty();
         let totalExp = 0;
         const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
         filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-
+    
         filteredExpenses.forEach((expense, index) => {
+            const iconPath = getIconPath(expense.category);
             totalExp += parseFloat(expense.amount);
             $('#expenseList').append(`
-                <li class="list-group-item expense-item" data-index="${index}">
-                    <div>${new Date(expense.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', weekday: 'short' })}</div>
-                    <div class="amount">RM ${parseFloat(expense.amount).toFixed(2)}</div>
-                    <div class="w-100">${expense.description}</div>
+                <li class="list-group-item expense-item d-flex align-items-center" data-index="${index}">
+                    <div>
+                        <img src="${iconPath}" alt="${expense.category}" style="width: 35px; height: 35px; margin-right: 10px; float: left; position: absolute;">
+                        <div style="margin-left: 50px;">
+                            <div>${new Date(expense.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', weekday: 'short' })}</div>
+                            <div class="w-100"><strong>${expense.description}</strong> (<strong>${expense.category}</strong>)</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="amount">RM ${parseFloat(expense.amount).toFixed(2)}</div>      
+                    </div>
                 </li>
             `);
         });
-
+    
         $('#totalExp').text(`RM ${totalExp.toFixed(2)}`);
-    }
+    }    
 
     function showForm(isEdit = false) {
         $('#mainInterface').hide();
@@ -84,7 +107,7 @@ $(document).ready(function() {
         filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         filteredExpenses.forEach(expense => {
-            categoryTotals[expense.description] = (categoryTotals[expense.description] || 0) + parseFloat(expense.amount);
+            categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + parseFloat(expense.amount);
             totalExpense += parseFloat(expense.amount);
         });
 
@@ -107,10 +130,10 @@ $(document).ready(function() {
                         label: 'Expense Summary',
                         data: data,
                         backgroundColor: [
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(255, 99, 132, 0.2)'
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(255, 99, 132, 1)'
                         ],
                         borderColor: [
                             'rgba(75, 192, 192, 1)',
@@ -163,6 +186,7 @@ $(document).ready(function() {
         editingIndex = null;
         $('#expenseAmount').val('');
         $('#expenseDate').val(getCurrentDate());
+        $('#expenseCategory').val('');
         $('#expenseDescription').val('');
         $('#deleteBtn').hide();
         showForm(false);
@@ -180,14 +204,14 @@ $(document).ready(function() {
         event.preventDefault();
         const amount = $('#expenseAmount').val();
         const date = $('#expenseDate').val();
+        const category = $('#expenseCategory').val();
         const description = $('#expenseDescription').val();
-        const currentUser = localStorage.getItem('currentUser');
 
         if (editingIndex === null) {
-            expenses.push({ amount, date, description });
+            expenses.push({ amount, date, category, description });
             $('#saveMessage').show();
         } else {
-            expenses[editingIndex] = { amount, date, description };
+            expenses[editingIndex] = { amount, date, category, description };
             $('#editMessage').show();
         }
 
@@ -209,6 +233,7 @@ $(document).ready(function() {
 
         $('#expenseAmount').val(expense.amount);
         $('#expenseDate').val(formatDate(expense.date));
+        $('#expenseCategory').val(expense.category);
         $('#expenseDescription').val(expense.description);
         $('#deleteBtn').show();
         showForm(true);
@@ -228,6 +253,7 @@ $(document).ready(function() {
     });
 
     $('#viewSummaryBtn').click(function() {
+        $('#totalExpense').remove(); // Clear the previous total expense display
         showSummary();
     });
 
@@ -247,8 +273,4 @@ $(document).ready(function() {
 
     updateMonthDisplay();
     renderExpenses();
-});
-
-document.getElementById('logoutBtn').addEventListener('click', function() {
-    window.location.href = 'index.html';
 });

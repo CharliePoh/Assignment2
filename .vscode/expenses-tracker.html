@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="expenses-tracker.css">
 </head>
-
 <body>
     <div class="container">
         <nav class="navbar navbar-dark bg-dark">
             <h1 class="text-center text-white">Expense Tracker</h1>
-            <button class="btn btn-dark" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+            <button class="btn btn-dark"><i class="fas fa-sign-out-alt"></i></button>
         </nav>
 
         <div id="mainInterface" class="p-3">
@@ -29,13 +29,17 @@
             <div class="frame p-3 mb-3" style="max-height: 300px; overflow-y: auto;">
                 <ul id="expenseList" class="list-group mb-3"></ul>
             </div>
+
+            <!-- Add Button -->
             <div class="d-flex justify-content-end">
-                <button id="addExpenseBtn" class="btn btn-primary">Add</button>
+                <button id="addExpenseBtn" class="btn btn-primary">Add<i class="bi bi-plus-square" style="margin-left:8px;"></i></button>
             </div>
         </div>
         <div id="expenseForm" style="display:none;">
+            <!-- Add expense form -->
             <h2 id="formTitle" class="text-white"></h2>
             <form>
+                <!-- Date -->
                 <div class="form-group">
                     <label for="expenseDate" class="text-white">Date</label>
                     <div class="input-group">
@@ -45,22 +49,44 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="expenseCategory" class="text-white">Category</label>
+                    <select name="expenseCategory" class="form-control" id="expenseCategory" required>
+                        <option value="" selected disabled hidden>Select Category</option>
+                        <option value="Shops">Shops</option>
+                        <option value="Food and Drink">Food & Drink</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+
+                <!-- Amount -->
                 <div class="form-group">
                     <label for="expenseAmount" class="text-white">Amount</label>
                     <input type="number" step="0.01" class="form-control" id="expenseAmount" required>
                 </div>
+
+                <!-- Description -->
                 <div class="form-group">
                     <label for="expenseDescription" class="text-white">Description</label>
                     <input type="text" class="form-control" id="expenseDescription" required>
                 </div>
+
+                <!-- Save, Edit and Delete buttons -->
                 <button type="submit" class="btn btn-success">Save</button>
                 <button type="button" class="btn btn-danger" id="deleteBtn" style="display:none;">Delete</button>
                 <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
             </form>
+
+            <!-- Save, Edit and Delete messages -->
             <div id="saveMessage" class="alert alert-success mt-3" style="display: none;">Expense saved successfully!</div>
             <div id="editMessage" class="alert alert-success mt-3" style="display: none;">Expense edited successfully!</div>
             <div id="deleteMessage" class="alert alert-success mt-3" style="display: none;">Expense deleted successfully!</div>
         </div>
+
+        <!-- View Summary -->
         <div id="summary" style="display:none;">
             <canvas id="summaryChart"></canvas>
             <div>
@@ -68,6 +94,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="expenses-tracker.js"></script>
