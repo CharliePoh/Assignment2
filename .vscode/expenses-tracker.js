@@ -159,7 +159,8 @@ $(document).ready(function() {
             ctx.data('chart', newChart);
         }
 
-        $('#totalExpense').text('Total Expense: RM ' + totalExpense.toFixed(2));
+        $('#totalExpense').remove();
+        ctx.after(`<div id="totalExpense" style="font-size: 16px; margin-top: 10px; color: red; background-color: white; padding: 5px;">Total Monthly Expense: RM ${totalExpense.toFixed(2)}</div>`);
     }
 
     function renderYearlySummaryChart(ctx) {
@@ -205,7 +206,8 @@ $(document).ready(function() {
             ctx.data('chart', newChart);
         }
 
-        $('#totalExpense').text('Total Yearly Expense: RM ' + totalExpense.toFixed(2));
+        $('#totalExpense').remove();
+        ctx.after(`<div id="totalExpense" style="font-size: 16px; margin-top: 10px; color: red; background-color: white; padding: 5px;">Total Yearly Expense: RM ${totalExpense.toFixed(2)}</div>`);
     }
 
     function updateButtonColors(selectedButtonId) {
