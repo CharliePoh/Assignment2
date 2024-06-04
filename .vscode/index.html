@@ -80,7 +80,9 @@
                 } else {
                     document.getElementById('message').style.display = 'block';
                     document.getElementById('message').textContent = 'Invalid username or password';
-                    setTimeout(toggleMode, 500);
+                    setTimeout(() => {
+                        document.getElementById('message').style.display = 'none';
+                    }, 500);
                 }
             } else {
                 if (localStorage.getItem(username)) {

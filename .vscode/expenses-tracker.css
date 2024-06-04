@@ -14,7 +14,7 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    overflow-y: hidden;
+    overflow-y: auto;
     max-height: calc(100vh - 100px);
 }
 .list-group-item {
@@ -29,10 +29,6 @@ body {
     background-color: greenyellow;
     color: black;
     border: none;
-}
-.btn-primary:hover {
-    background-color: #ccc;
-    color: rgba(0, 0, 0, 0.183);
 }
 .d-flex {
     margin-top: 20px;
@@ -63,7 +59,7 @@ body {
     color: #fff;
 }
 #summaryChart {
-    max-height: calc(100vh - 100px);
+    height: auto;
     display: block;
     margin: 0 auto; 
     margin-bottom: 20px;
@@ -73,14 +69,6 @@ body {
     display: none;
     text-align: center; 
     padding: 20px; 
-}
-.switch-wrapper {
-    display: flex;
-    justify-content: right;
-    margin-bottom: 10px;
-}
-.switch-wrapper button {
-    margin: 0px;
 }
 #backBtn {
     margin-top: 20px;
@@ -94,8 +82,9 @@ body {
     }
 }
 .navbar {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: #34495e;
     border-radius: 8px;
@@ -109,4 +98,14 @@ body {
     font-size: 1.8rem;
     color: #ecf0f1;
     margin: 0;
+}
+.navbar .btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
 }

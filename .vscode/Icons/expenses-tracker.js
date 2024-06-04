@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     let currentUser = localStorage.getItem('currentUser');
     if (!currentUser) {
@@ -160,8 +159,7 @@ $(document).ready(function() {
             ctx.data('chart', newChart);
         }
 
-        $('#totalExpense').remove();
-        ctx.after(`<div id="totalExpense" style="font-size: 16px; margin-top: 10px; color: red; background-color: white; padding: 5px;">Total Monthly Expense: RM ${totalExpense.toFixed(2)}</div>`);
+        $('#totalExpense').text('Total Expense: RM ' + totalExpense.toFixed(2));
     }
 
     function renderYearlySummaryChart(ctx) {
@@ -207,8 +205,7 @@ $(document).ready(function() {
             ctx.data('chart', newChart);
         }
 
-        $('#totalExpense').remove();
-        ctx.after(`<div id="totalExpense" style="font-size: 16px; margin-top: 10px; color: red; background-color: white; padding: 5px;">Total Yearly Expense: RM ${totalExpense.toFixed(2)}</div>`);
+        $('#totalExpense').text('Total Yearly Expense: RM ' + totalExpense.toFixed(2));
     }
 
     function updateButtonColors(selectedButtonId) {
@@ -349,8 +346,4 @@ $(document).ready(function() {
 
     updateMonthDisplay();
     renderExpenses();
-});
-
-document.getElementById('logoutBtn').addEventListener('click', function() {
-    window.location.href = 'index.html';
 });
