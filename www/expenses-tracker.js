@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     let currentUser = localStorage.getItem('currentUser');
     if (!currentUser) {
@@ -47,12 +46,13 @@ $(document).ready(function() {
         let totalExp = 0;
         const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
         filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
+        
         filteredExpenses.forEach((expense, index) => {
             const iconPath = getIconPath(expense.category);
             totalExp += parseFloat(expense.amount);
+            const expenseIndex = expenses.indexOf(expense);  // Get the original index of the expense
             $('#expenseList').append(`
-                <li class="list-group-item expense-item d-flex align-items-center" data-index="${index}">
+                <li class="list-group-item expense-item d-flex align-items-center" data-id="${expenseIndex}">
                     <div>
                         <img src="${iconPath}" alt="${expense.category}" style="width: 35px; height: 35px; margin-right: 10px; float: left; position: absolute;">
                         <div style="margin-left: 50px;">
@@ -66,7 +66,7 @@ $(document).ready(function() {
                 </li>
             `);
         });
-    
+        
         $('#totalExp').text(`RM ${totalExp.toFixed(2)}`);
     }    
 
@@ -242,6 +242,7 @@ $(document).ready(function() {
         return `${year}-${month}-${day}`;
     }
 
+    //add function
     $('#addExpenseBtn').click(function() {
         editingIndex = null;
         $('#expenseAmount').val('');
@@ -260,6 +261,7 @@ $(document).ready(function() {
         hideSummary();
     });
 
+    //submit form
     $('#expenseForm form').submit(function(event) {
         event.preventDefault();
         const amount = $('#expenseAmount').val();
@@ -279,26 +281,26 @@ $(document).ready(function() {
         editingIndex = null;
 
         setTimeout(() => {
-            hideForm();  // Hide the form and confirmation message after 2 seconds
-        }, 700);  // Adjust the delay as needed
+            hideForm();  // Hide the form and confirmation message after 700 milliseconds
+        }, 700); 
 
         renderSummaryChart();
     });
 
     $('#expenseList').on('click', '.expense-item', function() {
-        const listIndex = $(this).data('index');
-        const filteredExpenses = expenses.filter(expense => expense.date.startsWith(currentMonth));
-        const expense = filteredExpenses[listIndex];
-        editingIndex = expenses.findIndex(e => e === expense);
-
+        const expenseIndex = $(this).data('id');
+        const expense = expenses[expenseIndex];
+        editingIndex = expenseIndex;
+    
         $('#expenseAmount').val(expense.amount);
         $('#expenseDate').val(formatDate(expense.date));
         $('#expenseCategory').val(expense.category);
         $('#expenseDescription').val(expense.description);
         $('#deleteBtn').show();
         showForm(true);
-    });
+    });    
 
+    // delete function
     $('#deleteBtn').click(function() {
         if (editingIndex !== null) {
             expenses.splice(editingIndex, 1);
@@ -307,7 +309,7 @@ $(document).ready(function() {
             $('#deleteMessage').show();
             setTimeout(() => {
                 hideForm();
-            }, 700); // Hide the form and confirmation message after 2 seconds
+            }, 700); // Hide the form and confirmation message after 700 milliseconds
             renderSummaryChart();
         }
     });
@@ -351,6 +353,6 @@ $(document).ready(function() {
     renderExpenses();
 });
 
-document.getElementById('logoutBtn').addEventListener('click', function() {
+    document.getElementById('logoutBtn').addEventListener('click', function() {
     window.location.href = 'index.html';
 });
